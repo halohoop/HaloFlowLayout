@@ -84,9 +84,20 @@ public class FlowLayout extends ViewGroup {
             measureChild(child, widthMeasureSpec, heightMeasureSpec);
             MarginLayoutParams lp = (MarginLayoutParams) child
                     .getLayoutParams();
-            int childHeight = child.getMeasuredHeight() + lp.topMargin
+            int childHeightHold = child.getMeasuredHeight() + lp.topMargin
                     + lp.bottomMargin;
-            height += childHeight;
+            if (isLineLast == 0) {//露了如果只有一行且不足mColumn个的时候，所以下面的if来补充
+                height += childHeightHold;
+            }
+        }
+        int extra = childCount % mColumn;
+        if (extra != 0 && extra < mColumn) {//if来补充
+            View child = getChildAt(0);
+            MarginLayoutParams lp = (MarginLayoutParams) child
+                    .getLayoutParams();
+            int childHeightHold = child.getMeasuredHeight() + lp.topMargin
+                    + lp.bottomMargin;
+            height += childHeightHold;
         }
 //        height += getPaddingTop();//最后setMeasuredDimension的时候加入即可
 
