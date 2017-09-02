@@ -157,6 +157,7 @@ public class WidthFixedFlowLayout extends ViewGroup implements View.OnClickListe
         for (int i = 0; i < lines; i++) {
 //            int columnCount = i != lines - 1 ? column : extra;//有bug
             int columnCount = getCurrLineCount(column, lines, extra, i);
+            int maxLineHeightHold = 0;
             for (int j = 0; j < columnCount; j++) {
                 int index = i * column + j;
                 View child = getChildAt(index);
@@ -177,6 +178,7 @@ public class WidthFixedFlowLayout extends ViewGroup implements View.OnClickListe
                     break;
                 }
 
+                maxLineHeightHold = Math.max(bottom + lp.bottomMargin, maxLineHeightHold);
                 //定位下一次的开始点
                 if (j != (columnCount - 1)) {
                     pointerX = right + mEachotherMarginX;
@@ -186,7 +188,7 @@ public class WidthFixedFlowLayout extends ViewGroup implements View.OnClickListe
                             android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES
                                     .JELLY_BEAN_MR1 ?
                                     getPaddingStart() : getPaddingLeft();
-                    pointerY = bottom + lp.bottomMargin + mEachotherMarginY;
+                    pointerY = maxLineHeightHold + mEachotherMarginY;
                 }
             }
         }
