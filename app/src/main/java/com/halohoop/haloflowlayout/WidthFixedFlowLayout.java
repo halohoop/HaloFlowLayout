@@ -3,10 +3,12 @@ package com.halohoop.haloflowlayout;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import static android.R.attr.columnCount;
+import static android.content.ContentValues.TAG;
 import static com.halohoop.haloflowlayout.R.attr.column;
 
 /**
@@ -77,7 +79,7 @@ public class WidthFixedFlowLayout extends ViewGroup {
         final int lines = getLines(childCount, column);
         final int extra = childCount % column;
         for (int i = 0; i < lines; i++) {
-            int columnCount = i != lines - 1 ? mColumn : extra;
+            int columnCount = getCurrLineCount(column, lines, extra, i);
             int maxHeightInLine = 0;
             for (int j = 0; j < columnCount; j++) {
                 int index = i * column + j;
@@ -102,6 +104,10 @@ public class WidthFixedFlowLayout extends ViewGroup {
                 heightMode == MeasureSpec.EXACTLY ?
                         heightSize : height + getPaddingTop() + getPaddingBottom()
         );
+    }
+
+    private int getCurrLineCount(int column, int lines, int extra, int i) {
+        return i != lines - 1 ? column : (extra == 0 ? column : extra);
     }
 
     /**
@@ -145,12 +151,12 @@ public class WidthFixedFlowLayout extends ViewGroup {
                         getPaddingStart() : getPaddingLeft();
         int pointerY = getPaddingTop();
 
-        int column = getColumns();
+        final int column = getColumns();
         final int lines = getLines(childCount, column);
         final int extra = childCount % column;
         for (int i = 0; i < lines; i++) {
 //            int columnCount = i != lines - 1 ? column : extra;//有bug
-            int columnCount = i != lines - 1 ? column : (extra == 0 ? column : extra);
+            int columnCount = getCurrLineCount(column, lines, extra, i);
             for (int j = 0; j < columnCount; j++) {
                 int index = i * column + j;
                 View child = getChildAt(index);
@@ -163,20 +169,30 @@ public class WidthFixedFlowLayout extends ViewGroup {
                 top = pointerY + lp.topMargin;
                 right = left + mChildWidth;
                 bottom = top + child.getMeasuredHeight();
+                Log.i(TAG, TAG + "onLayout: " + left + "-"+top + "-" + right + "-" + bottom);
                 child.layout(left, top, right, bottom);
+
+                if (i == (lines - 1) && j == (columnCount - 1)) {//最后一个的时候不需要在矫正位置了
+                    Log.i(TAG, TAG + "最后一个break");
+                    break;
+                }
+
                 //定位下一次的开始点
-                if (j == (columnCount - 1) && i != (lines - 1)) {//末尾且还有下一行
+                if (j != (columnCount - 1)) {
+                    pointerX = right + mEachotherMarginX;
+                } else {
+                    Log.i(TAG, TAG + "换行");
                     pointerX =
                             android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES
                                     .JELLY_BEAN_MR1 ?
                                     getPaddingStart() : getPaddingLeft();
                     pointerY = bottom + lp.bottomMargin + mEachotherMarginY;
-                } else {//末尾且没有下一行
-                    pointerX = right + mEachotherMarginX;
                 }
             }
         }
     }
+
+    private static final String TAG = "WidthFixedFlowLayout--";
 
 
     @Override
