@@ -15,7 +15,7 @@ import static com.halohoop.haloflowlayout.R.attr.column;
  * Created by Pooholah on 2017/9/2.
  */
 
-public class WidthFixedFlowLayout extends ViewGroup {
+public class WidthFixedFlowLayout extends ViewGroup implements View.OnClickListener {
     /**
      * 有多少列
      */
@@ -29,7 +29,7 @@ public class WidthFixedFlowLayout extends ViewGroup {
      */
     private int mEachotherMarginY;
     /**
-     * 每个子view的宽度，固定了{@link FlowLayout#mEachotherMarginX}之后就能够固定下来了
+     * 每个子view的宽度，固定了{@link WidthFixedFlowLayout#mEachotherMarginX}之后就能够固定下来了
      */
     private int mChildWidth;
 
@@ -192,8 +192,38 @@ public class WidthFixedFlowLayout extends ViewGroup {
         }
     }
 
-    private static final String TAG = "WidthFixedFlowLayout--";
+    private OnItemClickListener mOnItemClickListener;
 
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        final int childCount = getChildCount();
+        if (onItemClickListener!=null) {
+            this.mOnItemClickListener = onItemClickListener;
+            for (int i = 0; i < childCount; i++) {
+                View child = getChildAt(i);
+                child.setOnClickListener(this);
+            }
+        }else{
+            for (int i = 0; i < childCount; i++) {
+                View child = getChildAt(i);
+                child.setOnClickListener(null);
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        int index = indexOfChild(v);
+        View child = getChildAt(index);
+        if (this.mOnItemClickListener != null && index != -1) {
+            this.mOnItemClickListener.onItemClick(this, index, child);
+        }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(WidthFixedFlowLayout flowLayout, int index, View v);
+    }
+
+    private static final String TAG = "WidthFixedFlowLayout--";
 
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
