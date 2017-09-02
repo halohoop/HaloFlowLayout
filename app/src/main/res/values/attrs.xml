@@ -1,6 +1,12 @@
 <resources>
-    <declare-styleable name="FlowLayout">
+    <!--<declare-styleable name="FlowLayout">
         <attr name="column" format="integer"></attr>
-        <attr name="margin_eachother" format="dimension"></attr>
+        <attr name="margin_eachother_x" format="dimension"></attr>
+        <attr name="margin_eachother_y" format="dimension"></attr>
+    </declare-styleable>-->
+    <declare-styleable name="WidthFixedFlowLayout">
+        <attr name="column" format="integer"></attr>
+        <attr name="margin_eachother_x" format="dimension"></attr>
+        <attr name="margin_eachother_y" format="dimension"></attr>
     </declare-styleable>
 </resources>

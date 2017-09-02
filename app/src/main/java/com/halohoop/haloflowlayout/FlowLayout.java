@@ -22,10 +22,14 @@ public class FlowLayout extends ViewGroup {
     /**
      * 彼此间隔，不包含子view自身设置的margin值
      */
-    private int mEachotherMargin;
+    private int mEachotherMarginX;
+    /**
+     * 上下间隔，不包含子view自身设置的margin值
+     */
+    private int mEachotherMarginY;
 
     /**
-     * 每个子view的宽度，固定了{@link FlowLayout#mEachotherMargin}之后就能够固定下来了
+     * 每个子view的宽度，固定了{@link FlowLayout#mEachotherMarginX}之后就能够固定下来了
      */
     private int mChildWidth;
 
@@ -39,9 +43,12 @@ public class FlowLayout extends ViewGroup {
 
     public FlowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
-        mColumn = ta.getInt(R.styleable.FlowLayout_column, 4);
-        mEachotherMargin = ta.getDimensionPixelOffset(R.styleable.FlowLayout_margin_eachother, 5);
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.WidthFixedFlowLayout);
+        mColumn = ta.getInt(R.styleable.WidthFixedFlowLayout_column, 4);
+        mEachotherMarginX = ta.getDimensionPixelOffset(R.styleable
+                .WidthFixedFlowLayout_margin_eachother_x, 5);
+        mEachotherMarginY = ta.getDimensionPixelOffset(R.styleable
+                .WidthFixedFlowLayout_margin_eachother_y, 5);
         ta.recycle();
     }
 
@@ -63,12 +70,12 @@ public class FlowLayout extends ViewGroup {
         int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
         int modeHeight = MeasureSpec.getMode(heightMeasureSpec);
 
-        int eachotherMarginSum = mEachotherMargin * (mColumn - 1);//如果有4列那就有3个空隙
+        int eachotherMarginSum = mEachotherMarginX * (mColumn - 1);//如果有4列那就有3个空隙
         //剩余可用宽度
         int sizeWidthLeft = 0;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             sizeWidthLeft = sizeWidth - getPaddingStart() - getPaddingEnd() - eachotherMarginSum;
-        }else{
+        } else {
             sizeWidthLeft = sizeWidth - getPaddingLeft() - getPaddingRight() - eachotherMarginSum;
         }
         mChildWidth = sizeWidthLeft / mColumn;
@@ -86,8 +93,12 @@ public class FlowLayout extends ViewGroup {
                     .getLayoutParams();
             int childHeightHold = child.getMeasuredHeight() + lp.topMargin
                     + lp.bottomMargin;
+            int isLineLast = (i + 1) % mColumn;
             if (isLineLast == 0) {//露了如果只有一行且不足mColumn个的时候，所以下面的if来补充
                 height += childHeightHold;
+                if (i != childCount - 1) {//
+                    height += mEachotherMarginY;
+                }
             }
         }
         int extra = childCount % mColumn;
@@ -129,13 +140,15 @@ public class FlowLayout extends ViewGroup {
                 View child = getChildAt(index);
                 MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
                 child.layout(layoutPointerX,
-                        layoutPointerY + lp.topMargin,
+                        i != 0 ? layoutPointerY + lp.topMargin + mEachotherMarginY//不是第一行
+                                : layoutPointerY + lp.topMargin,//是第一行
                         layoutPointerX + mChildWidth,
-                        layoutPointerY + lp.topMargin + child.getMeasuredHeight());
+                        i != 0 ? layoutPointerY + lp.topMargin + mEachotherMarginY + child.getMeasuredHeight()
+                                : layoutPointerY + lp.topMargin + child.getMeasuredHeight());
                 if ((childCount - 1) == index) {//如果是最后一个
                     break;
                 }
-                layoutPointerX += mEachotherMargin + mChildWidth;
+                layoutPointerX += mEachotherMarginX + mChildWidth;
                 if ((index + 1) % mColumn == 0) {
                     layoutPointerY += child.getMeasuredHeight()
                             + lp.bottomMargin + lp.topMargin;
