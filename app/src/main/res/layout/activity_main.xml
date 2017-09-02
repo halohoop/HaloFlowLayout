@@ -27,7 +27,6 @@
         android:background="#8e8"
         app:column="4">
 
-        <include layout="@layout/item" /><!--
         <include layout="@layout/item" />
         <include layout="@layout/item" />
         <include layout="@layout/item" />
@@ -40,7 +39,8 @@
         <include layout="@layout/item" />
         <include layout="@layout/item" />
         <include layout="@layout/item" />
-        <include layout="@layout/item" />-->
+        <include layout="@layout/item" />
+        <include layout="@layout/item" />
 
 <!--
         <FrameLayout
@@ -64,6 +64,21 @@
     <Button
         android:onClick="add"
         android:text="add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:onClick="setColumn"
+        android:text="setColumn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:onClick="addMarginX"
+        android:text="addMarginX"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <Button
+        android:onClick="addMarginY"
+        android:text="addMarginY"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

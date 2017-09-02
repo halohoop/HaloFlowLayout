@@ -143,6 +143,36 @@ public class WidthFixedFlowLayout extends ViewGroup implements View.OnClickListe
         return mColumn;
     }
 
+    public void setColumn(int column) {
+        if (column == mColumn) {
+            return;
+        }
+        this.mColumn = column;
+        requestLayout();
+    }
+
+    public int getChildWidth() {
+        return mChildWidth;
+    }
+
+    public int getEachotherMarginX() {
+        return mEachotherMarginX;
+    }
+
+    public void setEachotherMarginX(int eachotherMarginX) {
+        this.mEachotherMarginX = eachotherMarginX;
+        requestLayout();
+    }
+
+    public int getEachotherMarginY() {
+        return mEachotherMarginY;
+    }
+
+    public void setEachotherMarginY(int eachotherMarginY) {
+        this.mEachotherMarginY = eachotherMarginY;
+        requestLayout();
+    }
+
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int childCount = getChildCount();

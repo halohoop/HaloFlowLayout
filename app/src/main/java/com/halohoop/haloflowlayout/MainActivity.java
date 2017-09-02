@@ -22,4 +22,14 @@ public class MainActivity extends AppCompatActivity {
         fl.addView(textView);
     }
 
+    public void setColumn(View view){
+        fl.setColumn(5);
+    }
+    public void addMarginX(View view){
+        fl.setEachotherMarginX(fl.getEachotherMarginX() + 1);
+    }
+    public void addMarginY(View view){
+        fl.setEachotherMarginY(fl.getEachotherMarginY() + 1);
+    }
+
 }
